@@ -14,7 +14,7 @@
   .options{margin-top:12px;display:flex;flex-direction:column;gap:10px}
   button.opt{background:var(--accent);border:none;padding:12px 14px;border-radius:8px;color:#022;cursor:pointer;font-weight:600}
   button.opt.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:500}
-  .final{margin-top:14px;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px}
+  .final{margin-top:14px;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;white-space:pre-line}
   .small{font-size:13px;color:var(--muted);margin-top:8px}
   .nav-buttons{margin-top:10px;display:flex;gap:10px}
 </style>
@@ -38,7 +38,16 @@
       q: 'Pergunta 1: O mal existe?',
       options: [
         { label: 'Sim', next: '2' },
-        { label: 'Não', endText: `Fim do paradoxo. Parabéns, você conseguiu resolver uma dúvida milenar! Mas por dúvida, diga-nos, então:\n- Tudo é relativo. Mal e bom são interpretações.\n- Sou otimista :)\n- Sou burro mesmo.\n- Estamos no paraíso, só existe o bem.` }
+        { label: 'Não', next: 'opinioes' }
+      ]
+    },
+    'opinioes': {
+      q: 'Fim do paradoxo. Parabéns, você conseguiu resolver uma dúvida milenar! Mas por dúvida, diga-nos, então:',
+      options: [
+        { label: 'Tudo é relativo. Mal e bom são interpretações.', endText: 'Obrigado pela sua resposta!' },
+        { label: 'Sou otimista :)', endText: 'Obrigado pela sua resposta!' },
+        { label: 'Sou burro mesmo.', endText: 'Obrigado pela sua resposta!' },
+        { label: 'Estamos no paraíso, só existe o bem.', endText: 'Obrigado pela sua resposta!' }
       ]
     },
     '2': {
