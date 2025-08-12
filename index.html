@@ -1,55 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Meu Site de Escrita</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Paradoxo Interativo — O mal existe?</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: auto;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    h1 {
-      text-align: center;
-    }
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#9aa4b2;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071029 0%, #092235 100%);color:#e6eef6;display:flex;align-items:center;justify-content:center;padding:28px}
+    .app{width:100%;max-width:920px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:22px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    header{display:flex;align-items:center;gap:16px}
+    header h1{margin:0;font-size:20px}
+    .question-card{background:var(--card);padding:18px;border-radius:10px;margin-top:14px}
+    .qtext{font-size:18px;margin:0 0 12px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    button.opt{background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:var(--accent);padding:10px 14px;border-radius:8px;cursor:pointer}
+    button.opt:hover{transform:translateY(-2px)}
+    .result{margin-top:16px;padding:14px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+    .resp-list{display:flex;flex-direction:column;gap:8px}
+    .resp{background:#071829;padding:10px;border-radius:8px;border-left:4px solid rgba(6,182,212,0.16)}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:16px;display:flex;justify-content:space-between;align-items:center}
+    .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+    .chip{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px;font-size:13px;color:var(--muted)}
+    @media(max-width:520px){.qtext{font-size:16px}}
   </style>
 </head>
 <body>
-  <h1>Bem-vindo</h1>
-  <p>Uma criatura
+  <main class="app">
+    <header>
+      <h1>Paradoxo Interativo</h1>
+      <div class="chip">Protótipo — HTML + JS</div>
+    </header><section class="question-card" id="card">
+  <p class="qtext" id="qtext">O mal existe?</p>
+  <div class="controls" id="controls">
+    <!-- opções irão aqui -->
+  </div>
 
-<p> Sei de uma criatura antiga e formidável,
-Que a si mesma devora os membros e as entranhas,
-Com a sofreguidão da fome insaciável.</p>
-    
-<p> Habita juntamente os vales e as montanhas;
-E no mar, que se rasga, à maneira do abismo,
-Espreguiça-se toda em convulsões estranhas.</p>
+  <div class="result" id="result" style="display:none;"></div>
 
-Traz impresso na fronte o obscuro despotismo;
-Cada olhar que despede, acerbo e mavioso,
-Parece uma expansão de amor e egoísmo.
+  <footer>
+    <div class="small">Clique nas opções para navegar pelo fluxo.</div>
+    <div>
+      <button class="btn-secondary" id="restart">Reiniciar</button>
+    </div>
+  </footer>
+</section>
 
-Friamente contempla o desespero e o gozo,
-Gosta do colibri, como gosta do verme,
-E cinge ao coração o belo e o monstruoso.
+  </main>  <script>
+    // Árvore de decisão simples. Cada nó tem: text, options: [{label, next}] e opcionalmente responses (finalizadores)
+    const tree = {
+      start: {
+        text: 'O mal existe?',
+        options: [
+          {label: 'Sim', next: 'sim_1'},
+          {label: 'Não', next: 'nao_final'}
+        ]
+      },
 
-Para ela o chacal é, como a rola, inerme;
-E caminha na terra imperturbável, como
-Pelo vasto arealum vasto paquiderme.
+      // Exemplo de ramo "Sim" com nova pergunta
+      sim_1: {
+        text: 'Deus, se existe, poderia acabar com o mal?',
+        options: [
+          {label: 'Sim, poderia', next: 'sim_2'},
+          {label: 'Não poderia', next: 'sim_contra'}
+        ]
+      },
 
-Na árvore que rebenta o seu primeiro gomo
-Vem a folha, que lento e lento se desdobra,
-Depois a flor, depois o suspirado pomo.
+      sim_2: {
+        text: 'Deus quer acabar com o mal?',
+        options: [
+          {label: 'Sim', next: 'sim_resp'},
+          {label: 'Não', next: 'sim_contra'}
+        ]
+      },
 
-Pois essa criatura está em toda a obra:
-Cresta o seio da flor e corrompe-lhe o fruto,
-E é nesse destruir que as suas forças dobra.
+      sim_resp: {
+        text: 'Então por que o mal existe?',
+        options: [
+          {label: 'Livre arbítrio', next: 'livre'},
+          {label: 'Teste divino', next: 'teste'},
+          {label: 'Outra explicação', next: 'outra'}
+        ]
+      },
 
-Ama de igual amor o poluto e o impoluto;
-Começa e recomeça uma perpétua lida,
-E sorrindo obedece ao divino estatuto.
-Tu dirás que é a Morte; eu direi que é a Vida..</p>
+      livre: { text: 'Livre arbítrio foi escolhido — fim do ramo.', responses: ['Você escolheu a explicação "Livre arbítrio".'] },
+      teste: { text: 'Teste divino — fim do ramo.', responses: ['Explicação: para nos testar.'] },
+      outra: { text: 'Outras explicações — fim do ramo.', responses: ['Existem várias interpretações.'] },
+
+      sim_contra: { text: 'Contradição apontada — fim do ramo.', responses: ['Se Deus pode e não quer, então talvez não seja bom.'] },
+
+      sim_1_alt: { text: 'Ramo alternativo', options: [] },
+
+      // Ramo "Não" finalizador com várias respostas possíveis (o que você pediu)
+      nao_final: {
+        text: 'Você disse que o mal não existe. Escolha um tom de resposta:',
+        options: [
+          {label: 'Filosófico', next: 'nao_resp_filo'},
+          {label: 'Irônico', next: 'nao_resp_iron'},
+          {label: 'Provocativo', next: 'nao_resp_prov'}
+        ]
+      },
+
+      nao_resp_filo: { text: 'Filosófico — final', responses: [
+        'Então você acha que tudo é relativo, depende do ponto de vista.',
+        'Interessante... talvez você esteja vendo o copo completamente cheio.',
+        'Para você, o mal é só uma ilusão. Legal pensar assim.'
+      ]},
+
+      nao_resp_iron: { text: 'Irônico — final', responses: [
+        'Você é muito otimista... ou muito distraído.',
+        'Se o mal não existe, estamos no paraíso, né?',
+        'Parabéns! Você acabou de resolver um problema filosófico milenar (ou não).'
+      ]},
+
+      nao_resp_prov: { text: 'Provocativo — final', responses: [
+        'Negar o mal é um ato de fé... ou de negação.',
+        'Cuidado, o mal adora quando a gente acha que ele não existe.',
+        'Você não está considerando tudo, hein? O mal pode estar escondido.'
+      ]}
+
+    };
+
+    // Elementos
+    const qtext = document.getElementById('qtext');
+    const controls = document.getElementById('controls');
+    const result = document.getElementById('result');
+    const restartBtn = document.getElementById('restart');
+
+    let current = 'start';
+
+    function renderNode(key){
+      const node = tree[key];
+      current = key;
+      qtext.textContent = node.text || '';
+      controls.innerHTML = '';
+      result.style.display = 'none';
+
+      if(node.options && node.options.length){
+        node.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'opt';
+          btn.textContent = opt.label;
+          btn.onclick = () => renderNode(opt.next);
+          controls.appendChild(btn);
+        });
+      } else if(node.responses){
+        // mostrar respostas finais
+        showResponses(node.responses);
+      } else {
+        // nó sem opções
+        showResponses(['Fim do ramo.']);
+      }
+    }
+
+    function showResponses(arr){
+      result.style.display = 'block';
+      result.innerHTML = '';
+      const container = document.createElement('div');
+      container.className = 'resp-list';
+
+      arr.forEach((r, i) => {
+        const el = document.createElement('div');
+        el.className = 'resp';
+        el.textContent = r;
+        container.appendChild(el);
+      });
+
+      // botão copiar (copia todas as respostas)
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'opt';
+      copyBtn.textContent = 'Copiar respostas';
+      copyBtn.style.marginTop = '10px';
+      copyBtn.onclick = () => {
+        const text = arr.join('\n');
+        navigator.clipboard && navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar respostas', 1300);
+      };
+
+      result.appendChild(container);
+      result.appendChild(copyBtn);
+    }
+
+    restartBtn.onclick = () => renderNode('start');
+
+    // inicia
+    renderNode('start');
+  </script></body>
 </html>
