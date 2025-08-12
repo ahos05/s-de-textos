@@ -10,7 +10,7 @@
   body{margin:0;min-height:100vh;background:linear-gradient(180deg,var(--bg),#0b1b2a);display:flex;align-items:center;justify-content:center;padding:20px;color:#e6eef6}
   .card{width:100%;max-width:680px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
   h1{margin:0;font-size:20px}
-  .question{margin-top:14px;font-size:18px}
+  .question{margin-top:14px;font-size:18px;white-space:pre-line}
   .options{margin-top:12px;display:flex;flex-direction:column;gap:10px}
   button.opt{background:var(--accent);border:none;padding:12px 14px;border-radius:8px;color:#022;cursor:pointer;font-weight:600}
   button.opt.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:500}
@@ -42,12 +42,12 @@
       ]
     },
     'opinioes': {
-      q: 'Fim do paradoxo. Parabéns, você conseguiu resolver uma dúvida milenar! Mas por dúvida, diga-nos, então:',
+      q: 'Fim do paradoxo.\nParabéns, você conseguiu resolver uma dúvida milenar!\n\nMas por dúvida, diga-nos, então:',
       options: [
-        { label: 'Tudo é relativo. Mal e bom são interpretações.', endText: 'Obrigado pela sua resposta!' },
-        { label: 'Sou otimista :)', endText: 'Obrigado pela sua resposta!' },
-        { label: 'Sou burro mesmo.', endText: 'Obrigado pela sua resposta!' },
-        { label: 'Estamos no paraíso, só existe o bem.', endText: 'Obrigado pela sua resposta!' }
+        { label: 'Tudo é relativo. Mal e bom são interpretações.', endText: 'Sua resposta: Tudo é relativo. Mal e bom são interpretações.\n\nObrigado pela sua resposta!' },
+        { label: 'Sou otimista :)', endText: 'Sua resposta: Sou otimista :)\n\nObrigado pela sua resposta!' },
+        { label: 'Sou burro mesmo.', endText: 'Sua resposta: Sou burro mesmo.\n\nObrigado pela sua resposta!' },
+        { label: 'Estamos no paraíso, só existe o bem.', endText: 'Sua resposta: Estamos no paraíso, só existe o bem.\n\nObrigado pela sua resposta!' }
       ]
     },
     '2': {
