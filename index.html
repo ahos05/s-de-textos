@@ -38,11 +38,11 @@
       q: 'Pergunta 1: O mal existe?',
       options: [
         { label: 'Sim', next: '2' },
-        { label: 'Não', next: 'opinioes' }
+        { label: 'Não', next: 'fim_com_opinioes' }
       ]
     },
-    'opinioes': {
-      q: 'Fim do paradoxo. Parabéns, você conseguiu resolver uma dúvida milenar! Mas por dúvida, diga-nos, então:',
+    'fim_com_opinioes': {
+      q: 'Fim do paradoxo. Parabéns, você conseguiu resolver uma dúvida milenar!\n\nMas por dúvida, diga-nos, então:',
       options: [
         { label: 'Tudo é relativo. Mal e bom são interpretações.', endText: 'Obrigado pela sua resposta!' },
         { label: 'Sou otimista :)', endText: 'Obrigado pela sua resposta!' },
@@ -88,8 +88,8 @@
     }
   };
 
-  const qEl = document.getElementById('question');
-  const optsEl = document.getElementById('options');
+  const questionEl = document.getElementById('question');
+  const optionsEl = document.getElementById('options');
   const finalEl = document.getElementById('final');
   const backBtn = document.getElementById('backBtn');
   const restartBtn = document.getElementById('restartBtn');
@@ -99,8 +99,9 @@
   function render(nodeKey) {
     const node = nodes[nodeKey];
     if (!node) return;
-    qEl.textContent = node.q;
-    optsEl.innerHTML = '';
+
+    questionEl.textContent = node.q;
+    optionsEl.innerHTML = '';
     finalEl.style.display = 'none';
     finalEl.textContent = '';
 
@@ -116,15 +117,15 @@
           showFinal(opt.endText);
         }
       };
-      optsEl.appendChild(btn);
+      optionsEl.appendChild(btn);
     });
 
     backBtn.style.display = history.length ? 'inline-block' : 'none';
   }
 
   function showFinal(text) {
-    qEl.textContent = 'Resultado:';
-    optsEl.innerHTML = '';
+    questionEl.textContent = '';
+    optionsEl.innerHTML = '';
     finalEl.style.display = 'block';
     finalEl.textContent = text;
     backBtn.style.display = history.length ? 'inline-block' : 'none';
