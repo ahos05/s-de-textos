@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contador de Cliques</title>
+  <style>
+    html,body{height:100%;margin:0}
+    body{
+      background:#000;color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      -webkit-font-smoothing:antialiased;
+    }
+    .container{ text-align:center; max-width:420px; padding:24px; }
+    .count{ font-size:4rem; font-weight:700; margin-bottom:1.2rem; letter-spacing:.02em; }
+    button#btn{
+      background:linear-gradient(180deg,#1f8fff,#1466d6);
+      border:0;padding:18px 36px;font-size:1.25rem;border-radius:12px;
+      cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.6);color:#fff;
+      transition:transform .08s ease, box-shadow .08s ease;
+    }
+    button#btn:active{ transform:translateY(2px) scale(.995); box-shadow:0 4px 12px rgba(0,0,0,0.55) }
+    .controls{ margin-top:.8rem; }
+    button.small{
+      background:transparent;color:#fff;border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;border-radius:8px;margin:0 6px;cursor:pointer;
+    }
+    .meta{ margin-top:1rem;font-size:.9rem;opacity:.9 }
+    .warning{ color:#ffb4b4; margin-top:.5rem; font-size:.85rem; display:none }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="count" id="count">0</div>
+    <button id="btn" type="button" aria-label="Apertar o botão">APERTE</button>
+    <div class="controls">
+      <button class="small" id="reset" type="button">Resetar</button>
+    </div>
+    <div class="meta">Contagem salva no <code>localStorage</code> do navegador</div>
+    <div class="warning" id="warn">Aviso: armazenamento local indisponível — contagem NÃO será persistida entre recarregamentos.</div>
+  </div>
+
+  <script>
+    // ---- configuração ----
+    const KEY = 'contador_de_cliques_v1';
+    let inMemoryCount = 0;
+    let storageOk = false;
+
+    function storageAvailable() {
+      try {
+        const testKey = '__st_test__';
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    // ---- helpers de leitura/gravação (com try/catch) ----
+    function readCountFromStorage() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        const n = Number(raw);
+        return Number.isFinite(n) ? n : 0;
+      } catch (err) {
+        console.warn('Erro ao ler localStorage:', err);
+        storageOk = false;
+        return 0;
+      }
+    }
+
+    function writeCountToStorage(n) {
+      try {
+        localStorage.setItem(KEY, String(n));
+      } catch (err) {
+        console.warn('Erro ao gravar no localStorage:', err);
+        storageOk = false;
+        showStorageWarning();
+      }
+    }
+
+    function showStorageWarning() {
+      const w = document.getElementById('warn');
+      if (w) w.style.display = 'block';
+    }
+
+    // ---- inicialização do DOM ----
+    document.addEventListener('DOMContentLoaded', () => {
+      const countEl = document.getElementById('count');
+      const btn = document.getElementById('btn');
+      const reset = document.getElementById('reset');
+
+      storageOk = storageAvailable();
+      if (!storageOk) {
+        console.info('localStorage não disponível — usando fallback em memória.');
+        showStorageWarning();
+      }
+
+      // pega valor inicial
+      let count = storageOk ? readCountFromStorage() : inMemoryCount;
+      inMemoryCount = count;
+      countEl.textContent = count.toLocaleString('pt-BR');
+
+      // clique principal
+      btn.addEventListener('click', () => {
+        count += 1;
+        inMemoryCount = count;
+        if (storageOk) writeCountToStorage(count);
+        countEl.textContent = count.toLocaleString('pt-BR');
+        console.log('contador:', count);
+
+        // animação curta
+        try {
+          btn.animate(
+            [{ transform:'scale(1)' }, { transform:'scale(.98)' }, { transform:'scale(1)' }],
+            { duration: 120, easing: 'ease-out' }
+          );
+        } catch (e) {
+          // se animate não existir, ignora
+        }
+      });
+
+      // reset
+      reset.addEventListener('click', () => {
+        if (!confirm('Resetar o contador para zero?')) return;
+        count = 0;
+        inMemoryCount = 0;
+        if (storageOk) {
+          try {
+            localStorage.removeItem(KEY);
+          } catch (err) {
+            console.warn('Erro ao remover chave:', err);
+            storageOk = false;
+            showStorageWarning();
+          }
+        }
+        countEl.textContent = '0';
+        console.log('contador resetado');
+      });
+
+      // acessibilidade: suportar Enter/Space quando botão em foco
+      btn.addEventListener('keydown', (ev) => {
+        if (ev.key === ' ' || ev.key === 'Enter') {
+          ev.preventDefault();
+          btn.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
